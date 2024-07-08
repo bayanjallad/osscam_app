@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:osscam_app/core/res/color/color_palet.dart';
-import 'package:osscam_app/core/res/style/app_string.dart';
-import 'package:osscam_app/core/res/style/app_style.dart';
-import 'package:osscam_app/model/signup_model.dart';
+
+import 'package:osscam_app/core/constants/color_palet.dart';
+import 'package:osscam_app/core/constants/app_string.dart';
+import 'package:osscam_app/core/constants/app_style.dart';
+import 'package:osscam_app/feature/login/view/login_page.dart';
+import 'package:osscam_app/models/request/signup_model.dart';
+import 'package:osscam_app/feature/create&Join/view/create_join_Page.dart';
 
 import '../bloc/auth_bloc.dart';
 
-
+// ignore: must_be_immutable
 class SignupPage extends StatelessWidget {
   SignupPage({super.key});
   TextEditingController firstNameController = TextEditingController();
@@ -20,13 +23,13 @@ class SignupPage extends StatelessWidget {
   double circleHeight = 8.0;
   @override
 
-  //! 
+  //!
   // BlocListener<AuthBloc, AuthState>(
   //     bloc: BlocProvider.of<AuthBloc>(context),
   //     listener: (context, state) {
   //     if (state is SuccessInSignup) {
   //       Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateAndJoinPage(),));
-        
+
   //     }
   //     },
   Widget build(BuildContext context) {
@@ -238,22 +241,32 @@ class SignupPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(15),
                                 color: buttomColor),
                             child: Center(
-                              child: BlocBuilder<AuthBloc, AuthState>(
+                              child: BlocConsumer<AuthBloc, AuthState>(
+                                listener: (context, state) {
+                                  if (state is SuccessInSignup) {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          const CreateAndJoinPage(),
+                                    ));
+                                  }
+                                },
                                 builder: (context, state) {
                                   if (state is AuthInitial) {
                                     return Text(
                                       SIGNUP,
                                       style: textButtomStyle,
                                     );
-                                    
-                                  }else if(state is ErrorInSignup){
+                                  } else if (state is ErrorInSignup) {
                                     return const Text("there is an Error");
-                                  }else if(state is SuccessInSignup){
+                                  } else if (state is SuccessInSignup) {
                                     return Text(
                                       SIGNUP,
                                       style: textButtomStyle,
                                     );
-                                  }else {return const SizedBox();}
+                                  } else {
+                                    return const SizedBox();
+                                  }
                                 },
                               ),
                             ),
@@ -273,9 +286,15 @@ class SignupPage extends StatelessWidget {
                               style: checkTextStyle,
                             ),
                           ),
-                          Text(
-                            LOGIN,
-                            style: signcheckTextStyle,
+                          InkWell(
+                            onTap: () =>
+                                Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            )),
+                            child: Text(
+                              LOGIN,
+                              style: signcheckTextStyle,
+                            ),
                           ),
                           const Spacer()
                         ],
